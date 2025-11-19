@@ -25,3 +25,5 @@ temp/
 # Документация
 doc/
 *.docx
+
+TestClass.java
