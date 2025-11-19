@@ -12,48 +12,50 @@ class ExtensionFileFilterTest {
 
     @Test
     void testExtensionFileFilterInclude() {
-        // shouldProcess returns true if file should be FILTERED OUT
+        // Фильтр включения: обрабатываем только java и xml файлы
         Set<String> extensions = Set.of("java", "xml");
         FileFilter filter = new ExtensionFileFilter(extensions, true);
-        
-        // java and xml files should NOT be filtered (shouldProcess=false)
+
+        // java и xml файлы - НЕ фильтруем (должны обрабатываться)
         assertFalse(filter.shouldProcess(Paths.get("test.java")));
         assertFalse(filter.shouldProcess(Paths.get("test.xml")));
-        // txt files should be filtered (shouldProcess=true)
+
+        // txt файлы - фильтруем (НЕ должны обрабатываться)
         assertTrue(filter.shouldProcess(Paths.get("test.txt")));
     }
 
     @Test
     void testExtensionFileFilterExclude() {
-        // shouldProcess returns true if file should be FILTERED OUT
+        // Фильтр исключения: НЕ обрабатываем class и jar файлы
         Set<String> extensions = Set.of("class", "jar");
         FileFilter filter = new ExtensionFileFilter(extensions, false);
-        
-        // java files should NOT be filtered (shouldProcess=false)
+
+        // java файлы - НЕ фильтруем (должны обрабатываться)
         assertFalse(filter.shouldProcess(Paths.get("test.java")));
-        // class and jar files should be filtered (shouldProcess=true)
+
+        // class и jar файлы - фильтруем (НЕ должны обрабатываться)
         assertTrue(filter.shouldProcess(Paths.get("test.class")));
         assertTrue(filter.shouldProcess(Paths.get("test.jar")));
     }
 
     @Test
     void testExtensionFileFilter_NoExtension() {
-        // shouldProcess returns true if file should be FILTERED OUT
+        // Фильтр включения: обрабатываем только java файлы
         Set<String> extensions = Set.of("java");
         FileFilter filter = new ExtensionFileFilter(extensions, true);
-        
-        // Files without extension should be filtered (shouldProcess=true)
+
+        // Файлы без расширения - фильтруем (НЕ должны обрабатываться)
         assertTrue(filter.shouldProcess(Paths.get("test")));
         assertTrue(filter.shouldProcess(Paths.get("test.")));
     }
 
     @Test
     void testExtensionFileFilter_CaseInsensitive() {
-        // shouldProcess returns true if file should be FILTERED OUT
+        // Фильтр включения: обрабатываем только java файлы (без учета регистра)
         Set<String> extensions = Set.of("java");
         FileFilter filter = new ExtensionFileFilter(extensions, true);
-        
-        // java files (case insensitive) should NOT be filtered (shouldProcess=false)
+
+        // java файлы в разном регистре - НЕ фильтруем (должны обрабатываться)
         assertFalse(filter.shouldProcess(Paths.get("test.JAVA")));
         assertFalse(filter.shouldProcess(Paths.get("test.Java")));
     }

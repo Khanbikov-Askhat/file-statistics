@@ -12,56 +12,52 @@ class CompositeFileFilterTest {
 
     @Test
     void testCompositeFileFilter_AND() {
-        // shouldProcess returns true if file should be FILTERED OUT
-        // Include filter: include java/xml files (filter out others)
-        // Exclude filter: exclude class/jar files (filter out class/jar)
+        // Создаем фильтры:
+        // - Включаем только java и xml файлы
+        // - Исключаем class и jar файлы
         FileFilter includeFilter = new ExtensionFileFilter(Set.of("java", "xml"), true);
         FileFilter excludeFilter = new ExtensionFileFilter(Set.of("class", "jar"), false);
-        
+
         CompositeFileFilter compositeFilter = new CompositeFileFilter(CompositeFileFilter.CompositionType.AND);
         compositeFilter.addFilter(includeFilter);
         compositeFilter.addFilter(excludeFilter);
-        
-        // main.java: matches java (include=false, don't filter), not class/jar (exclude=false, don't filter)
-        // AND: false && false = false -> should NOT be filtered
+
+        // java файл: соответствует включению, не соответствует исключению -> НЕ фильтровать
         assertFalse(compositeFilter.shouldProcess(Paths.get("main.java")));
-        // main.class: doesn't match java/xml (include=true, filter), matches class (exclude=true, filter)
-        // AND: true && true = true -> should be filtered
+
+        // class файл: не соответствует включению, соответствует исключению -> фильтровать
         assertTrue(compositeFilter.shouldProcess(Paths.get("main.class")));
-        // main.txt: doesn't match java/xml (include=true, filter), not class/jar (exclude=false, don't filter)
-        // AND: true && false = false -> should NOT be filtered (only one filter says filter)
+
+        // txt файл: не соответствует включению, но и не соответствует исключению -> НЕ фильтровать
         assertFalse(compositeFilter.shouldProcess(Paths.get("main.txt")));
     }
 
     @Test
     void testCompositeFileFilter_OR() {
-        // shouldProcess returns true if file should be FILTERED OUT
-        // For OR: filter if ANY filter says to filter
-        // filter1 for java: !matches = false (don't filter java)
-        // filter2 for java: !matches = true (filter non-xml, which includes java)
-        // OR: false || true = true -> filter java (WRONG!)
-        // Actually, for include filters with OR, we want: don't filter if ANY says don't filter
-        // But our OR logic is: filter if ANY says filter
-        // So for OR with include filters, the logic doesn't work as expected
-        // Let's test with exclude filters instead:
+        // Создаем фильтры исключения:
+        // - Исключаем class файлы
+        // - Исключаем jar файлы
         FileFilter filter1 = new ExtensionFileFilter(Set.of("class"), false);
         FileFilter filter2 = new ExtensionFileFilter(Set.of("jar"), false);
-        
+
         CompositeFileFilter compositeFilter = new CompositeFileFilter(CompositeFileFilter.CompositionType.OR);
         compositeFilter.addFilter(filter1);
         compositeFilter.addFilter(filter2);
-        
-        // class and jar files should be filtered (shouldProcess=true)
+
+        // class файлы: соответствуют первому фильтру -> фильтровать
         assertTrue(compositeFilter.shouldProcess(Paths.get("test.class")));
+
+        // jar файлы: соответствуют второму фильтру -> фильтровать
         assertTrue(compositeFilter.shouldProcess(Paths.get("test.jar")));
-        // java files should NOT be filtered (shouldProcess=false)
+
+        // java файлы: не соответствуют ни одному фильтру -> НЕ фильтровать
         assertFalse(compositeFilter.shouldProcess(Paths.get("test.java")));
     }
 
     @Test
     void testCompositeFileFilter_Empty() {
+        // Пустой композитный фильтр не должен ничего фильтровать
         CompositeFileFilter compositeFilter = new CompositeFileFilter(CompositeFileFilter.CompositionType.AND);
-        // Empty composite filter should process all files (filter nothing)
         assertTrue(compositeFilter.shouldProcess(Paths.get("test.java")));
     }
 }
