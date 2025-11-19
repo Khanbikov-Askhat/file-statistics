@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Конфигурационный файл приложения -->
+<configuration>
+    <database>
+        <host>localhost</host>
+        <port>5432</port>
+        <name>test_db</name>
+        <username>admin</username>
+        <password>secret123</password>
+    </database>
+
+    <server>
+        <port>8080</port>
+        <timeout>30000</timeout>
+        <maxConnections>100</maxConnections>
+    </server>
+
+    <logging>
+        <level>INFO</level>
+        <file>/var/log/app.log</file>
+        <maxSize>100MB</maxSize>
+    </logging>
+</configuration>

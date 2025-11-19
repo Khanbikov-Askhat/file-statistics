@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<users>
+    <!-- Список пользователей системы -->
+    <user id="1">
+        <name>Иван Иванов</name>
+        <email>ivan@example.com</email>
+        <role>admin</role>
+        <created>2024-01-15</created>
+    </user>
+
+    <user id="2">
+        <name>Петр Петров</name>
+        <email>petr@example.com</email>
+        <role>user</role>
+        <created>2024-01-16</created>
+    </user>
+
+    <user id="3">
+        <name>Мария Сидорова</name>
+        <email>maria@example.com</email>
+        <role>moderator</role>
+        <created>2024-01-17</created>
+    </user>
+</users>
